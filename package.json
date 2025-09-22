@@ -1,0 +1,20 @@
+{
+  "name": "StitchApp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "clean": "turbo clean",
+    "mobile": "turbo dev --filter=mobile-app",
+    "admin": "turbo dev --filter=admin-panel",
+    "backend": "turbo dev --filter=backend",
+    "install:all": "npm install && npm run install:apps",
+    "install:apps": "npm install --workspace=mobile-app && npm install --workspace=admin-panel && npm install --workspace=backend",
+    "dedupe:react": "npm dedupe --workspace=mobile-app"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0"
+  },
+  "packageManager": "npm@8.19.0"
+}
