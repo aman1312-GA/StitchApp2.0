@@ -16,5 +16,9 @@
   "devDependencies": {
     "turbo": "^1.10.0"
   },
-  "packageManager": "npm@8.19.0"
+  "packageManager": "npm@8.19.0",
+  "dependencies": {
+    "expo-router": "^6.0.8",
+    "react-native-safe-area-context": "^5.6.1"
+  }
 }
