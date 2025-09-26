@@ -1,14 +1,14 @@
 // authentication resolvers
 import { AuthenticationError, UserInputError, ForbiddenError } from 'apollo-server-express';
-import User from '../models/User';
-import { generateTokens, verifyRefreshToken } from '../utils/jwt';
-import { validateRegisterInput, validateLoginInput } from '../utils/validation'
-import { requireAuth } from '../middleware/auth'
+import User from '../models/User.js';
+import { generateTokens, verifyRefreshToken } from '../utils/jwt.js';
+import { validateRegisterInput, validateLoginInput } from '../utils/validation.js'
+import { requireAuth } from '../middleware/auth.js'
 import { error } from 'console';
 
 export const authResolvers = {
     Mutation: {
-        register: async (__dirname, { input }) => {
+        register: async (_, { input }) => {
             try {
                 // validate input
                 const { errors, valid } = validateRegisterInput(input);
@@ -57,7 +57,7 @@ export const authResolvers = {
             }
         },
 
-        login: async (__dirname, { input }) => {
+        login: async (_, { input }) => {
 
             // validate input
             const { errors, valid } = validateLoginInput(input);
@@ -104,8 +104,7 @@ export const authResolvers = {
         refreshToken: async (_, { token }) => {
             try {
                 // verify refresh token
-                const userId = verifyRefreshToken(token);
-
+                const userId = verifyRefreshToken(token)?.userId;
                 // find user and check if refresh token exists
                 const user = await User.findById(userId);
                 if (!user) {

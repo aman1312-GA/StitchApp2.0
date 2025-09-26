@@ -1,7 +1,7 @@
 // JWT verification middleware
 import { AuthenticationError } from 'apollo-server-express'
-import { verifyAccessToken } from '../utils/jwt'
-import User from '../models/User'
+import { verifyAccessToken } from '../utils/jwt.js'
+import User from '../models/User.js'
 
 export const authMiddleware = {
     requestDidStart() {

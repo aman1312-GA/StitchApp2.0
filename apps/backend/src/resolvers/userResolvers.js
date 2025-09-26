@@ -1,12 +1,12 @@
 // user-related graphql resolvers
 import { UserInputError } from 'apollo-server-express';
-import User from '../model/User'
-import { requireAuth } from '../middleware/auth';
-import { validateRegisterInput } from '../utils/validation';
+import User from '../models/User.js'
+import { requireAuth } from '../middleware/auth.js';
+import { validateRegisterInput } from '../utils/validation.js';
 import bcrypt from 'bcryptjs'
 import { Mutation, Query } from 'type-graphql';
 
-export const userResolver = {
+export const userResolvers = {
     Query: {
         me: async (_, __, { user }) => {
             return requireAuth(user);

@@ -1,6 +1,6 @@
 import { GraphQLScalarType, Kind } from "graphql";
-import { userResolvers } from "./userResolvers";
-import { authResolvers } from "./authResolvers";
+import { userResolvers } from "./userResolvers.js";
+import { authResolvers } from "./authResolvers.js";
 
 // Custom date scalar
 const dateScalar = new GraphQLScalarType({
@@ -46,10 +46,14 @@ export const resolvers = {
     },
 
     Subscription: {
-        // Add subscription resolvers here when needed
+        // Add subscription resolvers here when needed. (Used for real time, event-driven data like chat application)
     },
 
-    // Type resolvers(if needed)
+
+    // Type resolvers(if needed). This is custom field resovlers. This is useful if a field's vaule is not a direct match
+    // from the database but needs to be computed from other fields. 
+    // Ex - fullName can be computed by combining firstName and lastName. So, we can add a custom field resolver for fullName.
+    // 
     // User: {
     //     // Add custom field resolvers here if needed
     //     fullName: (parent) => `${parent.firstName} ${parent.lastName}`,

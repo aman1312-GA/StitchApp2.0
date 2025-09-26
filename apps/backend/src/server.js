@@ -3,11 +3,12 @@ import { ApolloServer } from 'apollo-server-express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import { connectDB } from './config/database.js'
-import { typeDefs } from './schemas'
-import { resolvers } from './resolvers/index'
-import { verifyAccessToken } from './utils/jwt'
-import User from './models/User'
+import { typeDefs } from './schemas/index.js'
+import { resolvers } from './resolvers/index.js'
+import { verifyAccessToken } from './utils/jwt.js'
+import User from './models/User.js'
 import { validateAuthConfig } from './config/auth.js'
+import { validateEnv, env } from './config/env.js'
 
 
 
@@ -24,29 +25,40 @@ async function startServer() {
         const app = express();
 
         // CORS configuration
+        const allowedOrigins = [
+            ...env.ALLOWED_ORIGINS,
+            'https://studio.apollographql.com', // Apollo Studio
+            'http://localhost:4000', // GraphQL Playground local
+            '*' // Allow all origins in development
+        ];
 
-
-        // CORS configuration
         app.use(cors({
             origin: function (origin, callback) {
                 // Allow requests with no origin (like mobile apps or curl requests)
                 if (!origin) return callback(null, true);
 
-                if (env.ALLOWED_ORIGINS.includes(origin)) {
+                // In development, allow all origins
+                if (env.NODE_ENV === 'development') {
+                    return callback(null, true);
+                }
+
+                if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
                     return callback(null, true);
                 }
 
                 const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
                 return callback(new Error(msg), false);
             },
-            credentials: true
+            credentials: true,
+            methods: ['GET', 'POST', 'OPTIONS'],
+            allowedHeaders: ['Content-Type', 'Authorization', 'Apollo-Require-Preflight']
         }));
 
         // Health check endpoint
         app.get('/health', (req, res) => {
             res.json({
                 status: 'OK',
-                environment: env.NODE_ENV,
+                environment: process.env.NODE_ENV,
                 timestamp: new Date().toISOString(),
                 database: 'Connected'
             })
@@ -68,7 +80,7 @@ async function startServer() {
                         user = await User.findById(userId).select('-password -refreshTokens')
                     } catch (error) {
                         // Token is invalid, user remains null
-                        if (env.NODE_ENV === 'development') {
+                        if (process.env.NODE_ENV === 'development') {
                             console.log('Invalid token: ', error.message)
                         }
                     }
@@ -109,14 +121,14 @@ async function startServer() {
 
         app.listen(PORT, () => {
             console.log('🎉 Server started successfully!');
-            console.log(`🚀 Server running on http://${env.HOST}:${env.PORT}`);
-            console.log(`📊 GraphQL endpoint: http://${env.HOST}:${env.PORT}${server.graphqlPath}`);
+            console.log(`🚀 Server running on http://${process.env.HOST}:${process.env.PORT}`);
+            console.log(`📊 GraphQL endpoint: http://${process.env.HOST}:${process.env.PORT}${server.graphqlPath}`);
 
-            if (env.ENABLE_GRAPHQL_PLAYGROUND || env.NODE_ENV !== 'production') {
-                console.log(`🎮 GraphQL Playground: http://${env.HOST}:${env.PORT}${server.graphqlPath}`);
+            if (process.env.ENABLE_GRAPHQL_PLAYGROUND || process.env.NODE_ENV !== 'production') {
+                console.log(`🎮 GraphQL Playground: http://${process.env.HOST}:${process.env.PORT}${server.graphqlPath}`);
             }
 
-            console.log(`🏥 Health check: http://${env.HOST}:${env.PORT}/health`);
+            console.log(`🏥 Health check: http://${process.env.HOST}:${process.env.PORT}/health`);
 
         });
     } catch (error) {

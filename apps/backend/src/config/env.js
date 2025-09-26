@@ -53,7 +53,7 @@ export const env = {
 };
 
 // Validation function
-export const validateEnd = () => {
+export const validateEnv = () => {
     const required = [
         'MONGODB_URI',
         'JWT_ACCESS_SECRET',

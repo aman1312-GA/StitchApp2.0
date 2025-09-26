@@ -1,6 +1,5 @@
-// JWT token utilities
-
-import jst from 'jsonwebtoken'
+// JWT token utilitie
+import jwt from 'jsonwebtoken'
 
 export const generateTokens = (userId) => {
     const accessToken = jwt.sign(
@@ -11,8 +10,8 @@ export const generateTokens = (userId) => {
 
     const refreshToken = jwt.sign(
         { userId, type: 'refresh' },
-        process.env.JWT_REFRESH_TOKEN,
-        { expiresIn: process.env.JWT_REFRESH_TOEKN || '30d' }
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d' }
     )
 
     return { accessToken, refreshToken };
@@ -33,7 +32,7 @@ export const verifyAccessToken = (token) => {
 
 export const verifyRefreshToken = (token) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_REFRESH_TOKEN)
+        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
         if (decoded.type !== 'refresh') {
             throw new Error("Invalid token type");
         }

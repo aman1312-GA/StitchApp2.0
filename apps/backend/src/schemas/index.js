@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
-import { userSchema } from './userSchema';
-import { authSchema } from './authSchema';
+import { userSchema } from './userSchema.js';
+import { authSchema } from './authSchema.js';
 
 // Base schema with Query and Mutation types
 const baseSchema = gql`
