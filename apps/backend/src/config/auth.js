@@ -17,7 +17,7 @@ export const authConfig = {
 
     // Password Configuration
     password: {
-        saltRounds: parseInt(process.env.BCRYPT.SALT_ROUNDS) || 12,
+        saltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS) || 12,
         minLength: parseInt(process.env.PASSWORD_MIN_LENGTH) || 6,
         maxLength: parseInt(process.env.PASSWORD_MAX_LENGTH) || 128
     },
@@ -55,7 +55,7 @@ export const validateAuthConfig = () => {
         throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
     }
 
-    if (process.env.JWT_SECRET.length < 32) {
+    if (process.env.JWT_ACCESS_SECRET.length < 32) {
         throw new Error('JWT_ACCESS_SECRET must be at least 32 characters long');
     }
 

@@ -18,11 +18,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    isVerified: {
+    isVerified: { //   Indicates if user's email is veriffied
         type: Boolean,
         default: false
     },
-    refreshTokens: [{
+    refreshTokens: [{ // arrays of objects to store refresh tokens for multiple
         token: String,
         deviceInfo: String, // Optional: track device info
         createdAt: {
@@ -33,12 +33,12 @@ const userSchema = new mongoose.Schema({
     }],
     lastLogin: Date
 }, {
-    timestamps: true
+    timestamps: true // this automatically add two fields to each document createdAt and updatedAt
 });
 
-// hash password before saving
+// hash password before saving. pre-save middleware function. It runs before a user document is saved or remmoved from the database
 userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
+    if (!this.isModified('password')) return next(); //  optimization (prevent re-hashing)
 
     try {
         const salt = await bcrypt.genSalt(12);
@@ -48,7 +48,7 @@ userSchema.pre('save', async function (next) {
     }
 });
 
-// compare password method
+// compare plain-text password during login and hashed password 
 userSchema.methods.comparePassword = async function (password) {
     try {
         return await bcrypt.compare(password, this.password)
@@ -66,13 +66,14 @@ userSchema.methods.cleanExpiredTokens = function () {
 };
 
 
-// Ensure virtual fields are serailized
+// Ensure virtual fields are serailized.
+// Modifies the behaviour of Moongose when you convert a user document to a JSON object(e.g When sending it in an API response)
 userSchema.set('toJSON', {
     virtuals: true,
     transform: function (doc, ret) {
-        delete ret.password;
-        delete ret.refreshTokens;
-        return ret;
+        delete ret.password; // ensures user's password is never sent in an API response
+        delete ret.refreshTokens; // it prevents the sensitive refresh tokens from being exposed.
+        return ret; // ensures that any virtual fields (like full name) are included in the JSON output.
     }
 });
 

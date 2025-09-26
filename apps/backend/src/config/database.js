@@ -6,14 +6,11 @@ export const connectDB = async () => {
     try {
         // MongoDB connection options
         const options = {
-            useNewUrlParser: true,
-            userUnifiedTopology: true,
-            maxPoolSize: 10, // mantain upto 10 socket connection
+            maxPoolSize: 10, // maintain up to 10 socket connections
             serverSelectionTimeoutMS: 5000, // keep trying to send operations for 5 seconds
-            socketTimeoutMS: 45000, // Close sockets after 45 seconds of inavtivity
+            socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
             family: 4, // use IPv4
-            bufferCommands: false, // disable mongoose buffering
-            bufferMaxEntries: 0 // disable mongoose buffering
+            bufferCommands: false // disable mongoose buffering,
         };
 
         const conn = await mongoose.connect(process.env.MONGODB_URI, options);
@@ -47,7 +44,7 @@ export const connectDB = async () => {
 
 // Check if database is connected
 export const isConnected = () => {
-    return mongoose.connection.redayState === 1;
+    return mongoose.connection.readyState === 1;
 }
 
 // Get connection status
